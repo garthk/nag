@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/garthk/nag/pkg/plugin-runner"
+	"github.com/garthk/nag/naglib"
 	"github.com/garthk/nag/pkg/safe-colortext"
 	"github.com/spf13/cobra"
 	"log"
@@ -30,26 +30,26 @@ arguments, e.g. nag run -S -- /bin/test -d /var/log/apache2
 			panic(fmt.Sprintf("can't fetch sensitivity: %v", err))
 		}
 
-		options := runner.PluginRunOptions{
-			Timeout:   runner.DEFAULT_TIMEOUT,
+		options := naglib.PluginRunOptions{
+			Timeout:   naglib.DEFAULT_TIMEOUT,
 			Sensitive: sensitive,
 		}
 		if len(args) == 0 {
 			// TODO: implement finding commands
 			log.Printf("can't yet run all; echoing...\n")
-			result, err := runner.RunPlugin(options, "echo", "1234567890")
+			result, err := naglib.RunPlugin(options, "echo", "1234567890")
 			handle(result, err)
 		} else {
 			// TODO: implement finding commands
 			// TODO: distinguish between commands and executables
 			log.Printf("can't yet find commands; assuming executable...\n")
-			result, err := runner.RunPlugin(options, args[0], args[1:]...)
+			result, err := naglib.RunPlugin(options, args[0], args[1:]...)
 			handle(result, err)
 		}
 	},
 }
 
-func handle(result runner.PluginResult, err error) {
+func handle(result naglib.PluginResult, err error) {
 	if err != nil {
 		log.Println("command failed:", err.Error())
 	}

@@ -2,6 +2,8 @@
 
 **WORK IN PROGRESS**
 
+[![build status on master](https://api.travis-ci.org/garthk/nag.svg?branch=master)](https://travis-ci.org/garthk/nag)
+
 Nag yourself to fix anything broken, by running Nagios plugins for you:
 
 ```sh

@@ -1,0 +1,19 @@
+language: go
+
+go:
+  - 1.5
+  - tip
+
+os:
+  - linux
+
+env:
+  - "PATH=/home/travis/gopath/bin:$PATH"
+
+install:
+  - make deps
+
+script:
+  - make
+  - make test
+  - make lint

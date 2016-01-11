@@ -1,6 +1,8 @@
 source := $(shell find . -name \*.go)
 
-.PHONY: deps all install test clean
+.PHONY: default deps all install test clean
+
+default: nag test
 
 nag: $(source)
 	go build

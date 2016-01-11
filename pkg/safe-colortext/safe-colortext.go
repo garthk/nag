@@ -12,13 +12,13 @@ func IsStdoutColorSafe() bool {
 }
 
 func Foreground(cl ct.Color, bright bool) {
-	if (IsStdoutColorSafe()) {
+	if IsStdoutColorSafe() {
 		ct.Foreground(cl, bright)
 	}
 }
 
 func ResetColor() {
-	if (IsStdoutColorSafe()) {
+	if IsStdoutColorSafe() {
 		ct.ResetColor()
 	}
 }

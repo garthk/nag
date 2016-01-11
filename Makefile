@@ -23,3 +23,6 @@ test:
 
 clean:
 	go clean
+
+format:
+	go fmt ./...

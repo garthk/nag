@@ -1,11 +1,12 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"log"
 	"os"
+
+	"github.com/garthk/nag/naglib"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var cfgFile string
@@ -16,27 +17,28 @@ var RootCmd = &cobra.Command{
 	Long: `
 Nag yourself to fix anything broken, by running Nagios plugins for you.
 
-Read https://github.com/garthk/nag for more details.
-
-Examples:
-  nag list
-  nag run
-  nag run check_load
+Read https://github.com/garthk/nag for more details.`,
+	Example: `  nag list
+  nag check
+  nag check check_load
   nag run -- /usr/lib/nagios/plugins/check_load -w 15,10,5 -c 30,25,20
-  nag run -S -- /bin/test -d /var/log/apache2
-`,
+  nag run -S -- /bin/test -d /var/log/apache2`,
 }
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
+		printStatusLine(naglib.UNKNOWN, err.Error())
+		os.Exit(naglib.UNKNOWN)
 	}
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.nag.yaml)")
+	RootCmd.PersistentFlags().BoolP("critical-warnings", "W", false, "Upgrade WARNING to CRITICAL")
+	RootCmd.PersistentFlags().BoolP("critical-unknowns", "U", false, "Upgrade UNKNOWN to CRITICAL")
+	RootCmd.PersistentFlags().BoolP("critical-excess", "X", false, "Upgrade excess (>3) exit status to CRITICAL")
+	RootCmd.PersistentFlags().BoolP("tolerant", "x", false, "Pass excess (>3) exit status as-is, not as UNKNOWN")
 }
 
 func initConfig() {

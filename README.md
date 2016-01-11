@@ -15,13 +15,13 @@ nag run
 You'll love it so much, you'll run it every time you open a terminal:
 
 ```sh
-echo "$(which nag) run" >> ~/.bash_profile
+echo "$(which nag) check" >> ~/.profile
 ```
 
 Or, you'll just leave it running:
 
 ```sh
-watch nag --all
+watch nag check
 ```
 
 **CHECK _ALL_ THE THINGS!**

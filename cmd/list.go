@@ -1,15 +1,17 @@
 package cmd
 
 import (
-	"log"
+	"errors"
+
 	"github.com/spf13/cobra"
 )
 
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List NRPE commands",
-	Run: func(cmd *cobra.Command, args []string) {
-		log.Printf("can't yet find commands\n")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		cmd.SilenceUsage = true
+		return errors.New("can't yet list")
 	},
 }
 

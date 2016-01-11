@@ -18,7 +18,7 @@ type PluginResult struct {
 
 type PluginRunOptions struct {
 	Timeout   time.Duration
-	Sensitive bool
+	Treatment *ExitStatusTreatment
 }
 
 func RunPlugin(options PluginRunOptions, command string, args ...string) (PluginResult, error) {
@@ -60,7 +60,7 @@ func RunPlugin(options PluginRunOptions, command string, args ...string) (Plugin
 	}
 
 	status := cmd.ProcessState.Sys().(syscall.WaitStatus).ExitStatus()
-	pluginStatus := ExitStatusToPluginStatus(status, options.Sensitive)
+	pluginStatus := ExitStatusToPluginStatus(status, options.Treatment)
 	output := stdout.String()
 
 	result := PluginResult{

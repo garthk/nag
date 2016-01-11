@@ -1,68 +1,65 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"log"
+
 	"github.com/garthk/nag/naglib"
 	"github.com/garthk/nag/pkg/safe-colortext"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run a Nagios plugin or NRPE command",
+	Short: "Run a Nagios plugin or other executable",
 	Long: `
-Run a Nagios plugin or NRPE command, constraining their output and exit
+Run a Nagios plugin or other executable, constraining its output and exit
 status for compatibility.
 
-If --sensitive, run any command as if it's an NRPE command, treating its
-exit status as CRITICAL if non-zero.
-
-Timeouts and problems running the command are treated as UNKNOWN, even if
-run with --sensitive.
-
-Use the -- option to end option parsing so you can use options in command
-arguments, e.g. nag run -S -- /bin/test -d /var/log/apache2
+Use the -- option to end option parsing so you can give executables options.
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-		sensitive, err := cmd.Flags().GetBool("sensitive")
+	Example: `  nag run /usr/lib/nagios/plugins/check_http http://localhost:8001
+  nag run -WUX -- test -d /var/log/apache2`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		treatment, err := checkExitStatusFlags(cmd)
 		if err != nil {
-			panic(fmt.Sprintf("can't fetch sensitivity: %v", err))
+			return err
 		}
 
 		options := naglib.PluginRunOptions{
 			Timeout:   naglib.DEFAULT_TIMEOUT,
-			Sensitive: sensitive,
+			Treatment: treatment,
 		}
+
 		if len(args) == 0 {
-			// TODO: implement finding commands
-			log.Printf("can't yet run all; echoing...\n")
-			result, err := naglib.RunPlugin(options, "echo", "1234567890")
-			handle(result, err)
+			return errors.New("nag run: command required")
 		} else {
-			// TODO: implement finding commands
-			// TODO: distinguish between commands and executables
 			log.Printf("can't yet find commands; assuming executable...\n")
+			cmd.SilenceUsage = true
 			result, err := naglib.RunPlugin(options, args[0], args[1:]...)
-			handle(result, err)
+			return processPluginResult(result, err)
 		}
 	},
 }
 
-func handle(result naglib.PluginResult, err error) {
-	if err != nil {
-		log.Println("command failed:", err.Error())
+func processPluginResult(result naglib.PluginResult, err error) error {
+	if err == nil {
+		printStatusLine(result.Status, result.Output)
 	}
+	return err
+}
 
+func printStatusLine(status naglib.PluginStatus, msg string) {
 	fmt.Printf("[")
-	sc.Foreground(result.Status.Color(), false)
-	fmt.Printf("%s", result.Status)
+	sc.Foreground(status.Color(), false)
+	fmt.Printf("%s", status)
 	sc.ResetColor()
-	fmt.Printf("] %s", result.Output)
+	fmt.Printf("] %s\n", msg)
 }
 
 func init() {
 	RootCmd.AddCommand(runCmd)
-	runCmd.Flags().BoolP("sensitive", "S", false, "Upgrade all >0 exit status to CRITICAL")
+	addExitStatusFlags(runCmd)
 }
-

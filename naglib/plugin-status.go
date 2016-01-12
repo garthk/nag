@@ -8,9 +8,9 @@ type PluginStatus int
 
 const (
 	OK       PluginStatus = 0
-	WARNING               = 1
-	CRITICAL              = 2
-	UNKNOWN               = 3
+	WARNING  PluginStatus = 1
+	CRITICAL PluginStatus = 2
+	UNKNOWN  PluginStatus = 3
 )
 
 func (pluginStatus PluginStatus) String() string {

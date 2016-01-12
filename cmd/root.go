@@ -28,7 +28,7 @@ Read https://github.com/garthk/nag for more details.`,
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		printStatusLine(naglib.UNKNOWN, err.Error())
-		os.Exit(naglib.UNKNOWN)
+		os.Exit(int(naglib.UNKNOWN))
 	}
 }
 

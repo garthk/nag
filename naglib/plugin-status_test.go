@@ -2,29 +2,39 @@ package naglib
 
 import (
 	"testing"
+
+	"github.com/daviddengcn/go-colortext"
+	"github.com/stretchr/testify/assert"
 )
 
-func check(t *testing.T, status PluginStatus, expected string) {
-	actual := status.String()
-	if actual != expected {
-		t.Errorf("%s != %s", actual, expected)
-	}
-}
-
-// TODO: testify
-
 func Test_PluginStatusStringConversion_OK(t *testing.T) {
-	check(t, OK, "OK")
+	assert.Equal(t, "OK", OK.String())
 }
 
 func Test_PluginStatusStringConversion_WARNING(t *testing.T) {
-	check(t, WARNING, "WARNING")
+	assert.Equal(t, "WARNING", WARNING.String())
 }
 
 func Test_PluginStatusStringConversion_CRITICAL(t *testing.T) {
-	check(t, CRITICAL, "CRITICAL")
+	assert.Equal(t, "CRITICAL", CRITICAL.String())
 }
 
 func Test_PluginStatusStringConversion_UNKNOWN(t *testing.T) {
-	check(t, UNKNOWN, "UNKNOWN")
+	assert.Equal(t, "UNKNOWN", UNKNOWN.String())
+}
+
+func Test_PluginStatusColorConversion_OK(t *testing.T) {
+	assert.Equal(t, ct.Green, OK.Color())
+}
+
+func Test_PluginStatusColorConversion_WARNING(t *testing.T) {
+	assert.Equal(t, ct.Yellow, WARNING.Color())
+}
+
+func Test_PluginStatusColorConversion_CRITICAL(t *testing.T) {
+	assert.Equal(t, ct.Red, CRITICAL.Color())
+}
+
+func Test_PluginStatusColorConversion_UNKNOWN(t *testing.T) {
+	assert.Equal(t, ct.Magenta, UNKNOWN.Color())
 }

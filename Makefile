@@ -10,6 +10,7 @@ nag: $(source)
 all: deps nag test
 
 deps:
+	go get github.com/stretchr/testify
 	go get -v ./...
 
 install: nag

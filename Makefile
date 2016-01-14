@@ -20,7 +20,8 @@ lint:
 	go vet ./...
 
 test:
-	go test -v -covermode=count -coverprofile=coverage.out ./naglib
+	go test -v -covermode=count -coverprofile=naglib.out ./naglib
+	go test -v -covermode=count -coverprofile=rfs.out ./pkg/readable-fs
 
 clean:
 	go clean

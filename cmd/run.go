@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/garthk/nag/naglib"
 	"github.com/garthk/nag/pkg/safe-colortext"
@@ -34,9 +33,8 @@ Use the -- option to end option parsing so you can give executables options.
 		}
 
 		if len(args) == 0 {
-			return errors.New("nag run: command required")
+			return errors.New("nag run: executable required")
 		} else {
-			log.Printf("can't yet find commands; assuming executable...\n")
 			cmd.SilenceUsage = true
 			result, err := naglib.RunPlugin(options, args[0], args[1:]...)
 			return processPluginResult(result, err)

@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"errors"
+	"fmt"
 
+	"github.com/garthk/nag/naglib"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +12,16 @@ var listCmd = &cobra.Command{
 	Short: "List NRPE commands",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
-		return errors.New("can't yet list")
+		cfg, err := naglib.ParseConfig(nrpeCfgFile)
+		if err != nil {
+			return err
+		}
+
+		for k, v := range cfg.Commands {
+			fmt.Printf("command[%s]=%s\n", k, v)
+		}
+
+		return nil
 	},
 }
 

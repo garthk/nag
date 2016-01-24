@@ -29,19 +29,9 @@ import (
 
 const MAX_INPUT_BUFFER = 2048      // common.h
 const MAX_FILENAME_LENGTH = 256    // common.h
-const DEFAULT_COMMAND_TIMEOUT = 60 // nrpe.c
 
 // WARNING: you MUST maintain these in sync with ../pkg/fake-readable-fs/types.go
 
-type NagiosConfig struct {
-	RunAsUser      string
-	RunAsGroup     string
-	AllowArguments bool
-	CommandPrefix  string
-	CommandTimeout time.Duration
-	NonFatalErrors []error
-	Commands       map[string]string
-}
 
 const NRPE_NO_VAR_ERR = "No variable name specified in config file '%s' - Line '%d'"
 const NRPE_NO_VAL_ERR = "No variable value specified in config file '%s' - Line '%d'"
@@ -56,10 +46,7 @@ func ParseConfig(filename string) (*NagiosConfig, error) {
 
 func parseConfig(cfg *NagiosConfig, fs rfs.ReadableFileSystem, filename string) (*NagiosConfig, error) {
 	if cfg == nil {
-		cfg = &NagiosConfig{
-			CommandTimeout: DEFAULT_COMMAND_TIMEOUT * time.Second,
-		}
-		cfg.Commands = make(map[string]string)
+		cfg = NewNagiosConfig()
 	}
 
 	rawbytes, err := fs.ReadFile(filename)

@@ -10,12 +10,6 @@ import (
 
 const DEFAULT_TIMEOUT = 60 * time.Second
 
-type PluginResult struct {
-	OriginalOutput string
-	Output         string
-	Status         PluginStatus
-}
-
 type PluginRunOptions struct {
 	Timeout   time.Duration
 	Treatment *ExitStatusTreatment

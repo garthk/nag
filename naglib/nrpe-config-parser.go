@@ -30,9 +30,6 @@ import (
 const MAX_INPUT_BUFFER = 2048      // common.h
 const MAX_FILENAME_LENGTH = 256    // common.h
 
-// WARNING: you MUST maintain these in sync with ../pkg/fake-readable-fs/types.go
-
-
 const NRPE_NO_VAR_ERR = "No variable name specified in config file '%s' - Line '%d'"
 const NRPE_NO_VAL_ERR = "No variable value specified in config file '%s' - Line '%d'"
 const NRPE_DIR_OPEN_ERR = "Could not open config directory '%s' for reading."

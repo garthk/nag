@@ -21,28 +21,35 @@ Use the -- option to end option parsing so you can give executables options.
 	Example: `  nag run /usr/lib/nagios/plugins/check_http http://localhost:8001
   nag run -WUX -- test -d /var/log/apache2`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		treatment, err := checkExitStatusFlags(cmd)
 		if err != nil {
 			return err
 		}
 
-		options := naglib.PluginRunOptions{
-			Timeout:   naglib.DEFAULT_TIMEOUT,
-			Treatment: treatment,
+		cfg, err := naglib.ParseConfig(nrpeCfgFile)
+		if err != nil {
+			return err
+		}
+
+		context := naglib.PluginContext{
+			NagiosConfig:        cfg,
+			ExitStatusTreatment: treatment,
 		}
 
 		if len(args) == 0 {
 			return errors.New("nag run: executable required")
 		} else {
 			cmd.SilenceUsage = true
-			result, err := naglib.RunPlugin(options, args[0], args[1:]...)
-			return processPluginResult(result, err)
+			result, err := naglib.RunPlugin(&context, args[0], args[1:]...)
+			return processPluginResult(context, result, err)
 		}
 	},
 }
 
-func processPluginResult(result naglib.PluginResult, err error) error {
+func processPluginResult(context naglib.PluginContext, result naglib.PluginResult, err error) error {
+	for _, msg := range context.Messages {
+		printStatusLine(msg.Severity, msg.Message)
+	}
 	if err == nil {
 		printStatusLine(result.Status, result.Output)
 	}

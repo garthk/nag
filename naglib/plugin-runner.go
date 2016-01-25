@@ -2,6 +2,8 @@ package naglib
 
 import (
 	"bytes"
+	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"syscall"
@@ -10,17 +12,27 @@ import (
 
 const DEFAULT_TIMEOUT = 60 * time.Second
 
-type PluginRunOptions struct {
-	Timeout   time.Duration
-	Treatment *ExitStatusTreatment
-}
+func RunPlugin(context *PluginContext, command string, args ...string) (PluginResult, error) {
+	cfg := context.NagiosConfig
+	if cfg == nil {
+		cfg = NewNagiosConfig()
+	}
 
-func RunPlugin(options PluginRunOptions, command string, args ...string) (PluginResult, error) {
 	cmd := exec.Command(command, args...)
 	cmd.Stderr = os.Stderr
 
 	var stdout bytes.Buffer
 	cmd.Stdout = &stdout
+
+	sysprocattr, err := getSysProcAttr(nil, context)
+	if err != nil {
+		return pluginError(err)
+	}
+	if sysprocattr != nil {
+		log.Printf("will attempt to run as user %d:%d\n", sysprocattr.Credential.Uid, sysprocattr.Credential.Gid)
+		// TODO check privs
+		cmd.SysProcAttr = sysprocattr
+	}
 
 	if err := cmd.Start(); err != nil {
 		return PluginResult{
@@ -36,13 +48,8 @@ func RunPlugin(options PluginRunOptions, command string, args ...string) (Plugin
 		donec <- cmd.Wait()
 	}()
 
-	timeout := options.Timeout
-	if timeout.Nanoseconds() == 0 {
-		timeout = DEFAULT_TIMEOUT
-	}
-
 	select {
-	case <-time.After(timeout):
+	case <-time.After(cfg.CommandTimeout):
 		cmd.Process.Kill()
 		return PluginResult{
 			OriginalOutput: stdout.String(),
@@ -54,7 +61,7 @@ func RunPlugin(options PluginRunOptions, command string, args ...string) (Plugin
 	}
 
 	status := cmd.ProcessState.Sys().(syscall.WaitStatus).ExitStatus()
-	pluginStatus := ExitStatusToPluginStatus(status, options.Treatment)
+	pluginStatus := ExitStatusToPluginStatus(status, context.ExitStatusTreatment)
 	output := stdout.String()
 
 	result := PluginResult{
@@ -63,4 +70,12 @@ func RunPlugin(options PluginRunOptions, command string, args ...string) (Plugin
 		Status:         pluginStatus,
 	}
 	return result, nil
+}
+
+func pluginError(err error) (PluginResult, error) {
+	return PluginResult{
+		OriginalOutput: "",
+		Output:         fmt.Sprintf("%s\n", err.Error()),
+		Status:         UNKNOWN,
+	}, err
 }

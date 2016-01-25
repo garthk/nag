@@ -22,8 +22,10 @@ lint:
 test:
 	go test -v -covermode=count -coverprofile=naglib.out ./naglib
 	go test -v -covermode=count -coverprofile=rfs.out ./pkg/readable-fs
+	go test -v -covermode=count -coverprofile=userinfo.out ./pkg/user-info-shim
 	go tool cover -func=naglib.out
 	go tool cover -func=rfs.out
+	go tool cover -func=userinfo.out
 
 clean:
 	go clean

@@ -25,6 +25,7 @@ Read https://github.com/garthk/nag for more details.`,
   nag check check_load
   nag run -- /usr/lib/nagios/plugins/check_load -w 15,10,5 -c 30,25,20
   nag run -S -- /bin/test -d /var/log/apache2`,
+	DisableAutoGenTag: true,
 }
 
 func Execute() {

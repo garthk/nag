@@ -20,6 +20,7 @@ Use the -- option to end option parsing so you can give executables options.
 `,
 	Example: `  nag run /usr/lib/nagios/plugins/check_http http://localhost:8001
   nag run -WUX -- test -d /var/log/apache2`,
+	DisableAutoGenTag: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		treatment, err := checkExitStatusFlags(cmd)
 		if err != nil {

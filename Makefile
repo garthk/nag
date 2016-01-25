@@ -11,6 +11,7 @@ all: deps nag test
 
 deps:
 	go get github.com/stretchr/testify
+	go get github.com/cpuguy83/go-md2man/md2man
 	go get -v ./...
 
 install: nag

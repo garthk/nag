@@ -8,8 +8,9 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List NRPE commands",
+	Use:               "list",
+	Short:             "List NRPE commands",
+	DisableAutoGenTag: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 		cfg, err := naglib.ParseConfig(nrpeCfgFile)

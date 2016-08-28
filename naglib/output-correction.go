@@ -16,16 +16,37 @@ func DefaultOutputIfBlank(output string, status PluginStatus) string {
 }
 
 func TruncateAndEnforceNewline(output string) string {
-	length := len(output)
-	switch {
-	case length == 0:
-		return "\n"
+	return TruncateUTF8StringAtByte(output, MAX_PLUGIN_OUTPUT_LENGTH) + "\n";
+}
 
-	case length > (MAX_PLUGIN_OUTPUT_LENGTH - 1):
-		return output[:MAX_PLUGIN_OUTPUT_LENGTH-1] + "\n"
-
-	case output[length-1] == '\n':
-		return output
+func TruncateUTF8StringAtByte(str string, at int) string {
+	if at >= len(str) {
+		return str
 	}
-	return output + "\n"
+	if at <= 0 {
+		return ""
+	}
+	maxidx := len(str) - 1
+	for idx := at - 1; idx >= 0; idx-- {
+		thisByte := str[idx]
+		if !inCodePoint(thisByte) {
+			return str[:idx+1] // up to thisByte inclusive
+		}
+		if idx < maxidx {
+			nextByte := str[idx+1]
+			if !inCodePoint(nextByte) || beginsCodePoint(nextByte) {
+				// thisByte is the last in a code point
+				return str[:idx+1]
+			}
+		}
+	}
+	return ""
+}
+
+func beginsCodePoint(c byte) bool {
+	return c&128 == 128 && c&64 == 64
+}
+
+func inCodePoint(c byte) bool {
+	return c&128 == 128
 }

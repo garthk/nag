@@ -31,7 +31,7 @@ watch nag check
 Allie Brosh at her best: [This is Why I'll Never be an Adult][TIWINBA]. If you like it, [buy her book][HAAHB].
 
 [TIWINBA]: http://hyperboleandahalf.blogspot.com.au/2010/06/this-is-why-ill-never-be-adult.html
-[HAAHB]: http://hyperboleandahalfbook.blogspot.com.au)
+[HAAHB]: http://hyperboleandahalfbook.blogspot.com.au
 
 ## Demo
 
@@ -45,22 +45,6 @@ Try Nag out in Docker:
 If you prefer `precise`, `apt-get install dialog nagios-nrpe-server` to avoid
 spam during installation.
 
-## Secret Victory Condition
-
-Just between you and me, operators, the idea is to make it _so absurdly easy_
-for developers to test their Nagios commands, they no longer have an excuse to
-not write them. Who can argue three steps is too hard?
-
-0. Read [Nagios for Developers][NFD]
-0. Write short scripts
-0. `nag run`
-
-Just between you and me, developers, a good set of checks will pay for
-themselves by solving problems before they hit your desk as frustrating third
-level support tickets.
-
-[NFD]:doc/nagios-for-developers.md
-
 ## Audience
 
 I designed Nag for:
@@ -70,6 +54,8 @@ I designed Nag for:
 
 * Anyone developing or maintaining Nagios plugins, especially if they are
   [learning Nagios][NFD]
+
+[NFD]:doc/nagios-for-developers.md
 
 ## Why the name?
 
